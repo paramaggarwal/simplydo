@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html> <!--manifest="cache.manifest"-->
+<head>
+<title>Offline To Do</title>
+<style>
+div {
+  width: 300px;
+}
+</style>
+</head>
+<body onload="createNew();">
+<p><input type="button" id="new" onclick='createNew()' value="Create New"></p>
+<p id="notes"></p>
+
+<script type="text/javascript">
+
+var boxEdited = true;
+var noteId = 1;
+function createNew() {
+  if(boxEdited) {
+    var newElem = document.createElement("div");
+    var d = new Date();
+    newElem.id = noteId;
+    newElem.innerHTML = 
+      "<input type='hidden' id='modified" + noteId +
+      "' name='modified' value='" + d.getTime() + "' >" +
+      "<input type='checkbox' onclick='boxChecked(this)'> " +
+      "<input type='text' autofocus onkeyup='edited(this)' onblur='showLabel(this)'>" +
+      "<div onclick='showBox(this)'></div>";
+    document.getElementById('notes').appendChild(newElem);
+    boxEdited = false;
+    noteId++;
+  }
+}
+
+function boxChecked(el) {
+  if(el.checked) {
+    el.nextElementSibling.nextElementSibling.style.color = "#ccc";
+  } else {
+    el.nextElementSibling.nextElementSibling.style.color = "#000";
+  }
+}
+
+function showLabel(el) {
+  if(document.querySelector('#notes').lastElementChild.lastElementChild.previousElementSibling.value != "")
+    boxEdited = true;
+  if(el.value != "") {
+    el.type = 'hidden';
+    el.nextElementSibling.innerHTML = el.value;
+    el.nextElementSibling.style.display = 'inline';
+    createNew();
+  }
+  var d = new Date();
+  el.previousElementSibling.previousElementSibling.value = d.getTime();
+}
+
+function showBox(el) {
+  el.style.display= 'none';
+  el.previousElementSibling.type = 'text';
+  el.previousElementSibling.value = el.innerHTML;
+  el.previousElementSibling.focus();
+}
+
+function edited(x) {
+  if(event.keyCode == 13) showLabel(x);
+}
+
+</script>
+</body>
+</html>
